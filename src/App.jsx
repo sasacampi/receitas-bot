@@ -1,17 +1,25 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import RootLayout from "./_root/RootLayout";
-import Home from "./_root/pages/Home";
+// eslint-disable-next-line no-unused-vars
+import React, { useState } from "react";
+import IngredientInput from "./components/IngredientInput";
+import RecipeList from "./components/RecipeList";
 
 function App() {
+  const [recipes, setRecipes] = useState([]);
+
+  const searchRecipes = async (ingredients) => {
+    const response = await fetch(
+      `http://localhost:8000/receitas?ingredientes=${ingredients}`
+    );
+    const data = await response.json();
+    setRecipes(data);
+  };
+
   return (
-    <Router>
-      <Routes>
-        <Route element={<RootLayout />}>
-          <Route index element={<Home />} />
-          {/* Add more routes here if needed */}
-        </Route>
-      </Routes>
-    </Router>
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-semibold mb-4">Bot de Receitas</h1>
+      <IngredientInput onSearch={searchRecipes} />
+      {recipes.length > 0 && <RecipeList recipes={recipes} />}
+    </div>
   );
 }
 
